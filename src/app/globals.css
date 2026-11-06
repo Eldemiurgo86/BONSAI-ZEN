@@ -1,0 +1,207 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;900&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-display: 'Fredoka', ui-rounded, system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
+  --color-sakura: #ff8fb1;
+  --color-sakura-deep: #e5497a;
+  --color-moss: #3cc38a;
+  --color-moss-deep: #1d8a5c;
+  --color-sun: #ffd23f;
+  --color-sun-deep: #f0a500;
+  --color-sky: #55c8ff;
+  --color-sky-deep: #2b8fe0;
+  --color-plum: #6d3fb5;
+  --color-ink: #1d2b3a;
+  --color-paper: #fff7ea;
+  --color-clay: #d9733f;
+}
+
+/* Tokens de color. El modo oscuro se aplica solo si el usuario no fuerza el claro. */
+:root {
+  --bg: #fff7ea;
+  --fg: #1d2b3a;
+  --card: #ffffff;
+  --muted: #5b6b7c;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #1a2433;
+    --fg: #f5f7fb;
+    --card: #243247;
+    --muted: #a9b7c9;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #1a2433;
+  --fg: #f5f7fb;
+  --card: #243247;
+  --muted: #a9b7c9;
+  color-scheme: dark;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+.bg-jardin,
+.bg-bambu,
+.bg-templo {
+  --card: rgba(255, 255, 255, 0.92);
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+
+/* Fondos de la app. Los "exclusivos" son Premium (ver src/data/backgrounds.ts). */
+.bg-jardin {
+  background:
+    radial-gradient(circle at 15% 10%, rgba(255, 143, 177, 0.55), transparent 40%),
+    radial-gradient(circle at 90% 30%, rgba(255, 210, 63, 0.45), transparent 35%),
+    linear-gradient(180deg, #ffe9f1 0%, #e6f7ff 60%, #e9ffef 100%);
+}
+.bg-bambu {
+  background:
+    radial-gradient(circle at 80% 15%, rgba(255, 255, 255, 0.6), transparent 30%),
+    linear-gradient(180deg, #d9f7e2 0%, #9fe3b8 55%, #3cc38a 100%);
+}
+.bg-luna {
+  background:
+    radial-gradient(circle at 70% 18%, #ffe9a8 0 9%, transparent 9.5%),
+    linear-gradient(180deg, #2c1e4d 0%, #6d3fb5 55%, #ffb36b 100%);
+  --bg: transparent;
+  --fg: #fff;
+  --card: rgba(255, 255, 255, 0.14);
+  --muted: #e6dcff;
+  color: #fff;
+}
+.bg-templo {
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.9), transparent 35%),
+    linear-gradient(180deg, #dff3ff 0%, #b9ddf5 50%, #f5f9ff 100%);
+}
+
+/* Botones "brillantes": relieve, sombra inferior y pulsación. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 1.25rem;
+  padding: 0.75rem 1.25rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.125rem;
+  line-height: 1.2;
+  color: #fff;
+  box-shadow: 0 6px 0 rgba(29, 43, 58, 0.25), inset 0 2px 0 rgba(255, 255, 255, 0.45);
+  transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
+  cursor: pointer;
+  user-select: none;
+}
+.btn:hover {
+  filter: brightness(1.06);
+}
+.btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 rgba(29, 43, 58, 0.25);
+}
+.btn:focus-visible {
+  outline: 4px solid var(--color-sun);
+  outline-offset: 3px;
+}
+.btn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.btn-moss {
+  background: linear-gradient(180deg, #5fe0a5, #1d8a5c);
+}
+.btn-sakura {
+  background: linear-gradient(180deg, #ffa8c5, #e5497a);
+}
+.btn-sky {
+  background: linear-gradient(180deg, #7fd8ff, #2b8fe0);
+}
+.btn-sun {
+  background: linear-gradient(180deg, #ffe27a, #f0a500);
+  color: var(--color-ink);
+}
+.btn-plum {
+  background: linear-gradient(180deg, #9c6ce0, #6d3fb5);
+}
+.btn-ghost {
+  background: var(--card);
+  color: var(--fg);
+  box-shadow: 0 4px 0 rgba(29, 43, 58, 0.15);
+}
+
+.card {
+  background: var(--card);
+  color: var(--fg);
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px rgba(29, 43, 58, 0.12);
+}
+
+.input {
+  width: 100%;
+  border-radius: 1rem;
+  border: 2px solid rgba(29, 43, 58, 0.15);
+  background: #fff;
+  color: #1d2b3a;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+}
+.input:focus {
+  outline: 3px solid var(--color-sky);
+  outline-offset: 1px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+}
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+  z-index: 50;
+  background: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+}
+
+.sr-only-focusable:not(:focus) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* Tablero: el arrastre no debe desplazar la página. */
+.board {
+  touch-action: none;
+  user-select: none;
+}
+
+.btn-icon {
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  box-shadow: 0 3px 0 rgba(29, 43, 58, 0.15);
+}
+
+.btn-sm {
+  padding: 0.5rem 0.9rem;
+  font-size: 0.95rem;
+}
