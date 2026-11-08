@@ -10,3 +10,6 @@ coverage
 test-results
 playwright-report
 .DS_Store
+.vercel
+.env*
+!.env.example
