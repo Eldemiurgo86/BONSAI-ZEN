@@ -17,7 +17,7 @@ Juego web match-3 de cultivo de bonsáis. Combina piezas (hojas, flores de cerez
 - **Historia:** cuatro capítulos (uno por estación) con diálogos de la guardiana Ume. El final depende de si completas el último nivel de cada estación en Pro.
 - **Bonsái 3D procedural:** ramas y follaje generados a partir de una semilla, corteza con textura procedural, cinco etapas (semilla → obra maestra), tres estilos (cascada, japonés, vertical) y paleta por estación (flores en primavera, hojas rojizas en otoño, nieve en invierno).
 - **Animaciones:** caída y rebote de piezas, explosiones de partículas, cascadas anunciadas, balanceo del bonsái y brillo al lograr un logro. Respeta `prefers-reduced-motion` y tiene interruptores de animaciones y de movimiento reducido.
-- **Cuentas:** registro e inicio de sesión con correo y contraseña, sesiones en base de datos y cookie httpOnly.
+- **Acceso sin login:** al pulsar “Empezar” se crea una cuenta de invitado con su progreso en la base de datos y una sesión en cookie httpOnly. No hay pantalla de registro ni de inicio de sesión.
 - **Puntuación:** ranking global y por dificultad, perfil con estadísticas y 18 logros.
 - **Idiomas:** español e inglés.
 
@@ -71,7 +71,7 @@ El esquema está en [`db/schema.sql`](db/schema.sql) y se aplica con `npm run db
 
 | Tabla | Contenido |
 |---|---|
-| `users` | Nombre, correo único, hash de contraseña (bcrypt), `is_premium`, ID de cliente de Stripe. |
+| `users` | Nombre, correo único, hash de contraseña (bcrypt), `is_premium`, ID de cliente de Stripe. Los invitados tienen un correo generado y una contraseña aleatoria que nadie conoce. |
 | `sessions` | Sesiones. El id es el SHA-256 del token de la cookie; el token nunca se guarda en claro. |
 | `player_progress` | Dificultad, nivel actual, estación, semilla del bonsái, monedas, boosters, vidas y su ancla temporal, estadísticas (JSON) y logros desbloqueados. |
 | `level_results` | Historial de partidas: nivel, dificultad, victoria, estrellas y puntuación. Alimenta el ranking. |

@@ -43,7 +43,7 @@ export default function MenuPage() {
       await api('/api/auth/logout', { method: 'POST' });
     } finally {
       useSession.getState().clear();
-      router.replace('/login');
+      router.replace('/');
     }
   };
 

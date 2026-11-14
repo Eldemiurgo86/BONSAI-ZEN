@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from '@/store/session';
 
-/** Exige sesión: refresca /api/me al montar y redirige a /login si no hay cuenta. */
+/** Garantiza sesión al montar (crea un invitado si hace falta) y expone el estado para la pantalla. */
 export function useSessionGate() {
   const router = useRouter();
   const status = useSession((s) => s.status);
@@ -12,8 +12,8 @@ export function useSessionGate() {
 
   useEffect(() => {
     let cancelled = false;
-    void useSession.getState().refresh().then((ok) => {
-      if (!ok && !cancelled) router.replace('/login');
+    void useSession.getState().ensure().then((ok) => {
+      if (!ok && !cancelled) router.replace('/');
     });
     return () => {
       cancelled = true;

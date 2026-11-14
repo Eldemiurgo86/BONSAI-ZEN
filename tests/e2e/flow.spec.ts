@@ -17,27 +17,17 @@ async function swipe(page: Page, from: { row: number; col: number }, to: { row: 
   await page.mouse.up();
 }
 
-test('flujo completo: registro, mapa, historia, partida con pista y resultados', async ({ page }) => {
+test('flujo completo: entrada como invitado, mapa, historia, partida con pista y resultados', async ({ page }) => {
   const consoleErrors: string[] = [];
   page.on('pageerror', (err) => consoleErrors.push(`pageerror: ${err.message}`));
   page.on('console', (msg) => {
     if (msg.type() === 'error') consoleErrors.push(msg.text());
   });
 
-  const email = `e2e-${Date.now()}@example.com`;
-
-  // Portada → login (sin sesión).
+  // Portada → menú: sin login, la app crea una cuenta de invitado.
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Bonsái Zen' })).toBeVisible();
   await page.getByRole('button', { name: 'Empezar' }).click();
-  await expect(page).toHaveURL(/\/login$/);
-
-  // Registro.
-  await page.getByText('¿No tienes cuenta? Regístrate').click();
-  await page.getByLabel('Nombre').fill('Aprendiz E2E');
-  await page.getByLabel('Correo electrónico').fill(email);
-  await page.getByLabel('Contraseña').fill('contraseña-segura');
-  await page.getByRole('button', { name: 'Registrarme' }).click();
   await expect(page).toHaveURL(/\/menu$/);
   await expect(page.getByRole('heading', { name: 'Tu jardín' })).toBeVisible();
 
@@ -85,14 +75,8 @@ test('flujo completo: registro, mapa, historia, partida con pista y resultados',
 });
 
 test('modo Pro muestra salud del bonsái, clima y reloj durante la partida', async ({ page }) => {
-  const email = `e2e-pro-${Date.now()}@example.com`;
-  await page.goto('/login');
-  await page.getByText('¿No tienes cuenta? Regístrate').click();
-  await page.getByLabel('Nombre').fill('Aprendiz Pro');
-  await page.getByLabel('Correo electrónico').fill(email);
-  await page.getByLabel('Contraseña').fill('contraseña-segura');
-  await page.getByRole('button', { name: 'Registrarme' }).click();
-  await expect(page).toHaveURL(/\/menu$/);
+  await page.goto('/menu');
+  await expect(page.getByRole('heading', { name: 'Tu jardín' })).toBeVisible();
 
   // Elige Pro en la pantalla de dificultad.
   await page.goto('/difficulty');

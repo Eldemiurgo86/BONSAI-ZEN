@@ -16,8 +16,8 @@ export default function SplashPage() {
 
   const enter = async () => {
     setBusy(true);
-    const ok = await useSession.getState().refresh();
-    router.push(ok ? '/menu' : '/login');
+    const ok = await useSession.getState().ensure();
+    router.push(ok ? '/menu' : '/');
   };
 
   return (

@@ -55,7 +55,7 @@ export default function SettingsPage() {
   const logout = async () => {
     await api('/api/auth/logout', { method: 'POST' }).catch(() => {});
     useSession.getState().clear();
-    router.replace('/login');
+    router.replace('/');
   };
 
   return (

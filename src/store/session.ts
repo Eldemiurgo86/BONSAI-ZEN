@@ -16,12 +16,14 @@ interface SessionState {
   progress: ProgressSummary | null;
   /** Carga /api/me. Devuelve false si no hay sesión. */
   refresh: () => Promise<boolean>;
+  /** Garantiza una sesión: si no existe, crea una cuenta de invitado. */
+  ensure: () => Promise<boolean>;
   setProgress: (progress: ProgressSummary) => void;
   setUser: (user: UserDTO | null) => void;
   clear: () => void;
 }
 
-export const useSession = create<SessionState>()((set) => ({
+export const useSession = create<SessionState>()((set, get) => ({
   status: 'idle',
   user: null,
   progress: null,
@@ -39,6 +41,16 @@ export const useSession = create<SessionState>()((set) => ({
       set({ status: 'error' });
       return false;
     }
+  },
+  ensure: async () => {
+    if (await get().refresh()) return true;
+    try {
+      await api('/api/auth/guest', { method: 'POST' });
+    } catch {
+      set({ status: 'error' });
+      return false;
+    }
+    return get().refresh();
   },
   setProgress: (progress) => set({ progress }),
   setUser: (user) => set({ user }),
