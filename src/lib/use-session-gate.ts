@@ -13,7 +13,10 @@ export function useSessionGate() {
   useEffect(() => {
     let cancelled = false;
     void useSession.getState().ensure().then((ok) => {
-      if (!ok && !cancelled) router.replace('/');
+      if (!ok && !cancelled) {
+        const code = useSession.getState().lastError ?? 'unknown';
+        router.replace(`/?error=${encodeURIComponent(code)}`);
+      }
     });
     return () => {
       cancelled = true;

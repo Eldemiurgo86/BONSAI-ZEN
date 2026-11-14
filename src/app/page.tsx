@@ -1,7 +1,10 @@
 'use client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Notice } from '@/components/ui';
+import { ApiClientError } from '@/lib/api-client';
+import type { TranslationKey } from '@/data/i18n';
 import { BonsaiView } from '@/components/BonsaiView';
 import { useT } from '@/lib/use-t';
 import { useSession } from '@/store/session';
@@ -12,12 +15,25 @@ export default function SplashPage() {
   const t = useT();
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Muestra el motivo si una pantalla interna nos devolvió aquí tras un fallo de sesión.
+  useEffect(() => {
+    const code = new URLSearchParams(window.location.search).get('error');
+    if (code) setError(code);
+  }, []);
   const animations = useSettings((s) => s.animations && !s.reduceMotion);
 
   const enter = async () => {
     setBusy(true);
+    setError(null);
     const ok = await useSession.getState().ensure();
-    router.push(ok ? '/menu' : '/');
+    if (ok) {
+      router.push('/menu');
+      return;
+    }
+    setError(useSession.getState().lastError ?? 'unknown');
+    setBusy(false);
   };
 
   return (
@@ -31,6 +47,7 @@ export default function SplashPage() {
       <BonsaiView stage="maduro" style="japones" seed={20240601} season="primavera" animate={animations} className="h-[48dvh] w-full" />
 
       <div className="flex w-full max-w-xs flex-col gap-3">
+        {error && <SessionError code={error} />}
         <button type="button" className="btn btn-moss w-full text-xl" onClick={enter} disabled={busy}>
           {t('splash.play')}
         </button>
@@ -39,5 +56,17 @@ export default function SplashPage() {
         </Link>
       </div>
     </main>
+  );
+}
+
+/** Explica por qué no se pudo abrir la sesión, con el código técnico para depurar. */
+function SessionError({ code }: { code: string }) {
+  const t = useT();
+  const key: TranslationKey = code === 'database_not_configured' ? 'splash.errorDatabaseMissing' : 'splash.errorSession';
+  return (
+    <Notice tone="error">
+      <p>{t(key)}</p>
+      <p className="mt-1 text-xs font-normal opacity-80">{t('splash.errorCode', { code })}</p>
+    </Notice>
   );
 }

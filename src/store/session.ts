@@ -1,6 +1,6 @@
 'use client';
 import { create } from 'zustand';
-import { api } from '@/lib/api-client';
+import { api, ApiClientError } from '@/lib/api-client';
 import type { ProgressSummary, UserDTO } from '@/lib/dto';
 
 export type SessionStatus = 'idle' | 'loading' | 'ready' | 'guest' | 'error';
@@ -12,6 +12,8 @@ interface MeResponse {
 
 interface SessionState {
   status: SessionStatus;
+  /** Código de error de la última vez que no se pudo crear o cargar la sesión. */
+  lastError: string | null;
   user: UserDTO | null;
   progress: ProgressSummary | null;
   /** Carga /api/me. Devuelve false si no hay sesión. */
@@ -25,6 +27,7 @@ interface SessionState {
 
 export const useSession = create<SessionState>()((set, get) => ({
   status: 'idle',
+  lastError: null,
   user: null,
   progress: null,
   refresh: async () => {
@@ -46,8 +49,9 @@ export const useSession = create<SessionState>()((set, get) => ({
     if (await get().refresh()) return true;
     try {
       await api('/api/auth/guest', { method: 'POST' });
-    } catch {
-      set({ status: 'error' });
+    } catch (err) {
+      const code = err instanceof ApiClientError ? err.code : 'network_error';
+      set({ status: 'error', lastError: code });
       return false;
     }
     return get().refresh();
